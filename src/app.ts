@@ -4,6 +4,9 @@ import { UserController } from './routes/users';
 import  mongoose, { Mongoose } from 'mongoose';
 import * as dotenv from 'dotenv'
 import cors from 'cors'
+import { LoginController } from './routes/login';
+import { RegisterController } from './routes/register';
+import { ProductsController } from './routes/products';
 if (process.env.NODE_ENV !== 'production') {
     dotenv.config()
 }
@@ -51,6 +54,12 @@ export default class App {
     }
     private initRoutes(service: string):void {
         const userController = new UserController(this, `/${this.apiVersion}/${this.apiPrefix}/${service}`);
+
+        const loginController = new LoginController(this,`/${this.apiVersion}/${this.apiPrefix}/${'login'}`)
+        
+        const registerController = new RegisterController(this,`/${this.apiVersion}/${this.apiPrefix}/${'register'}`)
+
+        const productsController = new ProductsController(this,`/${this.apiVersion}/${this.apiPrefix}/${'products'}`)
     }
     public getAppServer():Express {
         return this.appServer;
