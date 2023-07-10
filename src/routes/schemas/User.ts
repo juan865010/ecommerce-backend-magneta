@@ -11,14 +11,13 @@ export interface IUser extends Document {
   email: string;
   password: string;
   roles: IRoles[];
-} 
+}
 const userSchema: Schema = new Schema({
   username: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   roles: [{ type: Object}],
 });
-
 export const UserModel = (mongoose: Mongoose) => {
   return mongoose.model<IUser>("User", userSchema);
 } 
