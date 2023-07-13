@@ -35,7 +35,7 @@ export class RegisterController {
             const findUser = await this.user.findOne({email})
 
             if (findUser) {
-              return res.status(400).json({ message: 'user already exists' });
+              return res.status(StatusCodes.BAD_REQUEST).json({ message: 'user already exists' });
             }
 
             const hashedPassword = await bcrypt.hash(password, 10);

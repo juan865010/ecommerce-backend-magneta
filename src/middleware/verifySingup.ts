@@ -3,6 +3,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { UserModel } from "../routes/schemas/User";
 import mongoose from 'mongoose';
+import { StatusCodes } from 'http-status-codes';
 
 export const checkDuplicateUsernameOrEmail = async (req: Request, res: Response, next: NextFunction) => {
   const User = UserModel(mongoose); 
@@ -10,7 +11,7 @@ export const checkDuplicateUsernameOrEmail = async (req: Request, res: Response,
   const email = await User.findOne({ email: req.body.email });
 
   if (email) {
-    res.status(400).json({ message: 'The email already exists' });
+    res.status(StatusCodes.BAD_REQUEST).json({ message: 'The email already exists' });
     return;
     }
 
@@ -29,17 +30,17 @@ export const validateDataRegisterLogin = async (req: Request, res: Response, nex
     );
 
     if (addsFields.length > 0) {
-      res.status(400).send('todos los campos son requeridos');
+      res.status(StatusCodes.BAD_REQUEST).send('All fields are required');
       return;
     }
 
     if (!username || !email || !password ) {
-      res.status(400).send('todos los campos son requeridos');
+      res.status(StatusCodes.BAD_REQUEST).send('All fields are required');
       return;
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      res.status(400).send('ingrese un correo valido');
+      res.status(StatusCodes.BAD_REQUEST).send('invalid email');
       return;
     }
 

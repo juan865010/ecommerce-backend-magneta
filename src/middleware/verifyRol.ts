@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { StatusCodes } from "http-status-codes";
 import jwt from 'jsonwebtoken'
 
 interface AuthenticatedRequest extends Request {
@@ -10,21 +11,21 @@ export const VerifyRol = (role: string[]) => {
 
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
-      return res.status(401).json({ message: 'Acceso no autorizado' });
+      return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized access' });
     }
 
     try {
       const decodedToken = jwt.verify(token, 'secretKey') as { UserId: string, role: string };
 
       if (!role.includes(decodedToken.role)) {
-        return res.status(403).json({ message: 'No tienes permiso para realizar esta acción' });
+        return res.status(StatusCodes.FORBIDDEN).json({ message: 'You do not have permission to perform this action' });
       }
       req.userId = decodedToken.UserId;
       console.log(req)
       next();
     } catch (error) {
-      console.error('Error en la verificación del token:', error);
-      res.status(401).json({ message: 'Acceso no autorizado' });
+      res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Unauthorized access' });
+      return
     }
   };
 }

@@ -30,19 +30,19 @@ export class LoginController {
             const { email, password } = req.body;
             const findUser = await this.user.findOne({email})
             if (!findUser) {
-                return res.status(401).json({ message: 'Credenciales inválidas' });
+                return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Credenciales inválidas' });
             }
             const passwordMatch = await bcrypt.compare(password, findUser.password);
 
             if (!passwordMatch) {
-                return res.status(401).json({ message: 'Credenciales inválidas' });
+                return res.status(StatusCodes.UNAUTHORIZED).json({ message: 'Credenciales inválidas' });
               }
 
             const token = jwt.sign({UserId:findUser._id, role:findUser.roles[0].name},'secretKey', { expiresIn: '2h' })
             
             req.headers.authorization = `Bearer ${token}`
 
-            res.status(200).json({token});
+            res.status(StatusCodes.OK).json({token});
             
         });
     }

@@ -34,7 +34,7 @@ export class ProductsController {
             const { id } = req.params;
             const result = await this.product.findById(id)
             if(!result){
-                res.status(404).json({msg: 'user not found'});    
+                res.status(StatusCodes.NOT_FOUND).json({msg: 'user not found'});    
             }
             res.status(StatusCodes.OK).json({result});
 
@@ -46,7 +46,7 @@ export class ProductsController {
             const newProduct = new this.product(requestObject);
             const result = await newProduct.save();
             if (result) {
-                res.status(201).json(result);
+                res.status(StatusCodes.ACCEPTED).json(result);
                 return;
             }
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({});
@@ -59,7 +59,7 @@ export class ProductsController {
           
             const findProduct = await this.product.findById(id)
             if(!findProduct){
-              res.status(400).send({message:'producto no encontrado'});
+              res.status(StatusCodes.BAD_REQUEST).send({message:'producto no encontrado'});
               return;
             }
             const result = await this.product.findByIdAndUpdate(id,requestObject,{new:true});
