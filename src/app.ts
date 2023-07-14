@@ -5,9 +5,12 @@ import  mongoose, { Mongoose } from 'mongoose';
 import * as dotenv from 'dotenv'
 import cors from 'cors'
 import { ClientController } from './routes/client';
+import productRoutes from './routes/schemas/Products';
+
 if (process.env.NODE_ENV !== 'production') {
     dotenv.config()
 }
+
 export default class App {
     private appServer:Express;
     private port:number = parseEnvNumber('PORT' || '') ;
@@ -23,14 +26,11 @@ export default class App {
         this.databaseClient = mongoose;
         this.appServer = express();
         this.setupServer();
-        
     }
     private setupDatabase() {
-        // const connecitonString = `mongodb://${this.databaseUser}:${this.databasePassword}@${this.databaseHost}:${this.databasePort}/${this.databaseName}`;
-        const connecitonString = `mongodb+srv://${this.databaseUser}:${this.databasePassword}@cluster0.2sxydhr.mongodb.net/${this.databaseName}`;
+        const connecitonString = `mongodb://${this.databaseUser}:${this.databasePassword}@${this.databaseHost}:${this.databasePort}/${this.databaseName}`;
         console.log('connection', connecitonString);
         this.databaseClient.connect(connecitonString);
-        
         this.databaseClient.connection.on('error', (error) => {
             console.log(error);
         });
@@ -50,10 +50,14 @@ export default class App {
         this.appServer.use(express.urlencoded({extended: true}));
         this.setupDatabase();
         this.initRoutes('users');
+        this.initRoutes('products');
+        this.initRoutes('clients');
     }
     private initRoutes(service: string):void {
         const userController = new UserController(this, `/${this.apiVersion}/${this.apiPrefix}/${service}`);
         const clientController = new ClientController(this, `/${this.apiVersion}/${this.apiPrefix}/client`);    }
+        const userController = new UserController(this, `/${this.apiVersion}/${this.apiPrefix}/${service}`);  
+    }
     public getAppServer():Express {
         return this.appServer;
     }
@@ -61,4 +65,10 @@ export default class App {
         return this.port;
     }
 
+    
 }
+
+
+
+
+
