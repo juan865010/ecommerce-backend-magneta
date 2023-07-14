@@ -4,6 +4,7 @@ import { UserController } from './routes/users';
 import  mongoose, { Mongoose } from 'mongoose';
 import * as dotenv from 'dotenv'
 import cors from 'cors'
+import { ClientController } from './routes/client';
 import productRoutes from './routes/schemas/Products';
 
 if (process.env.NODE_ENV !== 'production') {
@@ -26,13 +27,11 @@ export default class App {
         this.appServer = express();
         this.setupServer();
     }
-    //3.Conexión a MongoDB:
-    private setupDatabase():void  {
-        const connecitonString = 'mongodb://localhost:27017/seminario';
-
+    private setupDatabase() {
+        const connecitonString = `mongodb://${this.databaseUser}:${this.databasePassword}@${this.databaseHost}:${this.databasePort}/${this.databaseName}`;
         console.log('connection', connecitonString);
         this.databaseClient.connect(connecitonString);
-                this.databaseClient.connection.on('error', (error) => {
+        this.databaseClient.connection.on('error', (error) => {
             console.log(error);
         });
 
@@ -52,12 +51,13 @@ export default class App {
         this.setupDatabase();
         this.initRoutes('users');
         this.initRoutes('products');
-//      this.appServer.use('/api', productRoutes()); 
+        this.initRoutes('clients');
     }
     private initRoutes(service: string):void {
+        const userController = new UserController(this, `/${this.apiVersion}/${this.apiPrefix}/${service}`);
+        const clientController = new ClientController(this, `/${this.apiVersion}/${this.apiPrefix}/client`);    }
         const userController = new UserController(this, `/${this.apiVersion}/${this.apiPrefix}/${service}`);  
     }
-    
     public getAppServer():Express {
         return this.appServer;
     }
